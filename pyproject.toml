@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 dependencies = ["mcp>=1.0.0"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.6"]
+dev = ["pytest>=8", "ruff>=0.6", "build>=1.2"]
 
 [project.scripts]
 yasin-runflare-mcp = "yasin_runflare_mcp.server:main"
