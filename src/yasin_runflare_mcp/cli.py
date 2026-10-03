@@ -1,10 +1,10 @@
 """Narrow adapter around the official Runflare CLI."""
 
 from __future__ import annotations
+
 import os
 import subprocess
 from dataclasses import dataclass
-from pathlib import Path
 
 from .security import redact, validate_project_dir
 
@@ -17,6 +17,8 @@ class CLIResult:
 class RunflareCLI:
     def __init__(self, project_dir: str | None = None):
         self.binary = os.getenv("RUNFLARE_BIN", "runflare")
+        if os.path.basename(self.binary) != "runflare":
+            raise ValueError("RUNFLARE_BIN must resolve to the official runflare executable")
         self.timeout = int(os.getenv("RUNFLARE_TIMEOUT_SECONDS", "120"))
         self.max_output = int(os.getenv("RUNFLARE_MAX_OUTPUT", "12000"))
         self.project_dir = validate_project_dir(project_dir or os.getenv("RUNFLARE_PROJECT_DIR", ""))
