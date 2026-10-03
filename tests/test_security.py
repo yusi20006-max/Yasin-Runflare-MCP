@@ -1,3 +1,5 @@
+import subprocess
+
 import pytest
 
 from yasin_runflare_mcp.cli import RunflareCLI
@@ -34,6 +36,14 @@ def test_no_shell_execution(monkeypatch, tmp_path):
     with pytest.raises(RuntimeError):
         RunflareCLI().run("events", "-y")
 
+def test_rejects_non_runflare_executable(monkeypatch, tmp_path):
+    project = tmp_path / "project"
+    project.mkdir()
+    monkeypatch.setenv("RUNFLARE_PROJECT_DIR", str(project))
+    monkeypatch.setenv("RUNFLARE_BIN", "bash")
+    with pytest.raises(ValueError):
+        RunflareCLI()
+
 def test_argument_null_rejected(monkeypatch, tmp_path):
     project = tmp_path / "project"
     project.mkdir()
@@ -41,3 +51,14 @@ def test_argument_null_rejected(monkeypatch, tmp_path):
     cli = RunflareCLI()
     with pytest.raises(ValueError):
         cli.run("events", "bad\x00arg")
+
+def test_timeout_is_bounded(monkeypatch, tmp_path):
+    project = tmp_path / "project"
+    project.mkdir()
+    monkeypatch.setenv("RUNFLARE_PROJECT_DIR", str(project))
+    cli = RunflareCLI()
+    def timeout(*args, **kwargs):
+        raise subprocess.TimeoutExpired(cmd=kwargs.get("args", "runflare"), timeout=1)
+    monkeypatch.setattr(subprocess, "run", timeout)
+    with pytest.raises(RuntimeError, match="timed out"):
+        cli.run("events", "-y")
