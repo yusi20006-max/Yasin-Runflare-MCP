@@ -1,7 +1,3 @@
-import os
-import subprocess
-from pathlib import Path
-
 import pytest
 
 from yasin_runflare_mcp.cli import RunflareCLI
@@ -44,4 +40,4 @@ def test_argument_null_rejected(monkeypatch, tmp_path):
     monkeypatch.setenv("RUNFLARE_PROJECT_DIR", str(project))
     cli = RunflareCLI()
     with pytest.raises(ValueError):
-        cli.run("events", "bad\\x00arg")
+        cli.run("events", "bad\x00arg")
