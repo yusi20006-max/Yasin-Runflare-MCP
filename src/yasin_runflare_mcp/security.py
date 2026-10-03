@@ -5,19 +5,19 @@ import re
 from pathlib import Path
 
 SECRET_PATTERNS = [
-    re.compile(r"(?i)(authorization\\s*[:=]\\s*bearer\\s+)[^\\s,;]+"),
-    re.compile(r"(?i)(api[_-]?key\\s*[:=]\\s*)[^\\s,;]+"),
-    re.compile(r"(?i)(token\\s*[:=]\\s*)[^\\s,;]+"),
-    re.compile(r"(?i)(password\\s*[:=]\\s*)[^\\s,;]+"),
-    re.compile(r"(?i)(secret\\s*[:=]\\s*)[^\\s,;]+"),
+    re.compile(r"(?i)(authorization\s*[:=]\s*bearer\s+)[^\s,;]+"),
+    re.compile(r"(?i)(api[_-]?key\s*[:=]\s*)[^\s,;]+"),
+    re.compile(r"(?i)(token\s*[:=]\s*)[^\s,;]+"),
+    re.compile(r"(?i)(password\s*[:=]\s*)[^\s,;]+"),
+    re.compile(r"(?i)(secret\s*[:=]\s*)[^\s,;]+"),
 ]
 
 def redact(text: str, limit: int) -> str:
     value = text
     for pattern in SECRET_PATTERNS:
-        value = pattern.sub(r"\\1[REDACTED]", value)
+        value = pattern.sub(r"\1[REDACTED]", value)
     if len(value) > limit:
-        value = value[:limit] + "\\n[OUTPUT TRUNCATED]"
+        value = value[:limit] + "\n[OUTPUT TRUNCATED]"
     return value
 
 def validate_project_dir(project_dir: str) -> Path:
